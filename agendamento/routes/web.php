@@ -49,4 +49,8 @@ use Illuminate\Support\Facades\Route;
         $paciente->update($request->all());
         return response()->json(['success' => true]);
     });
-    
+    use App\Http\Controllers\AgendamentoController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('agendamentos', AgendamentoController::class);
+});

@@ -9,12 +9,15 @@ class Agendamento extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'paciente_id', 'data', 'descricao'
-    ];
+    protected $fillable = ['nome', 'data', 'descricao'];
 
-    public function paciente()
+    public function user()
     {
-        return $this->belongsTo(Paciente::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public function scopeUpcoming($query)
+    {
+        return $query->where('data', '>=', now());
     }
 }

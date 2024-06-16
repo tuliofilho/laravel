@@ -2,37 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreAgendamentoRequest;
 use App\Models\Agendamento;
+use Illuminate\Http\Request;
 
 class AgendamentoController extends Controller
 {
-    public function getAllAppointments()
+    public function index()
     {
-        $appointments = Agendamento::with('paciente')->get();
-
-        return response()->json($appointments->map(function($appointment) {
-            return [
-                'id' => $appointment->id,
-                'title' => $appointment->descricao,
-                'start' => $appointment->data,
-                'color' => $appointment->paciente->color ?? '#3788d8' // Assumindo que cada paciente tem uma propriedade de cor
-            ];
-        }));
+        $agendamentos = Agendamento::all();
+        return view('agendamentos.index', compact('agendamentos'));
     }
 
-    public function getAppointmentDetails($id)
+    public function store(StoreAgendamentoRequest $request)
     {
-        $appointment = Agendamento::find($id);
-
-        return response()->json($appointment);
-    }
-
-    public function getAppointmentsByDate(Request $request)
-    {
-        $date = $request->get('date');
-        $appointments = Agendamento::whereDate('data', $date)->get();
-
-        return response()->json($appointments);
+        Agendamento::create($request->validated());
+        return redirect()->route('agendamentos.index')->with('success', 'Agendamento criado com sucesso!');
     }
 }
