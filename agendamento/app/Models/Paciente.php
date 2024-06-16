@@ -9,15 +9,5 @@ class Paciente extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nome', 'email', 'telefone', 'endereco'];
-
-    public function agendamentos()
-    {
-        return $this->hasMany(Agendamento::class);
-    }
-
-    public function anotacoes()
-    {
-        return $this->hasMany(Anotacao::class);
-    }
+    protected $fillable = ['nome', 'data_nascimento', 'email', 'telefone'];
 }

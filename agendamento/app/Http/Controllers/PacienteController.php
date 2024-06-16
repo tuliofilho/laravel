@@ -1,6 +1,5 @@
 <?php
 
-// app/Http/Controllers/PacienteController.php
 namespace App\Http\Controllers;
 
 use App\Models\Paciente;
@@ -10,30 +9,54 @@ class PacienteController extends Controller
 {
     public function index()
     {
-        return Paciente::all();
+        $pacientes = Paciente::all();
+        return view('pacientes.index', compact('pacientes'));
+    }
+
+    public function create()
+    {
+        return view('pacientes.create');
     }
 
     public function store(Request $request)
     {
-        $paciente = Paciente::create($request->all());
-        return response()->json($paciente, 201);
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'data_nascimento' => 'required|date',
+            'email' => 'nullable|email',
+            'telefone' => 'nullable|string',
+        ]);
+
+        Paciente::create($validated);
+        return redirect()->route('pacientes.index')->with('success', 'Paciente criado com sucesso!');
     }
 
-    public function show($id)
+    public function show(Paciente $paciente)
     {
-        return Paciente::find($id);
+        return view('pacientes.show', compact('paciente'));
     }
 
-    public function update(Request $request, $id)
+    public function edit(Paciente $paciente)
     {
-        $paciente = Paciente::findOrFail($id);
-        $paciente->update($request->all());
-        return response()->json($paciente, 200);
+        return view('pacientes.edit', compact('paciente'));
     }
 
-    public function destroy($id)
+    public function update(Request $request, Paciente $paciente)
     {
-        Paciente::destroy($id);
-        return response()->json(null, 204);
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'data_nascimento' => 'required|date',
+            'email' => 'nullable|email',
+            'telefone' => 'nullable|string',
+        ]);
+
+        $paciente->update($validated);
+        return redirect()->route('pacientes.index')->with('success', 'Paciente atualizado com sucesso!');
+    }
+
+    public function destroy(Paciente $paciente)
+    {
+        $paciente->delete();
+        return redirect()->route('pacientes.index')->with('success', 'Paciente excluído com sucesso!');
     }
 }
